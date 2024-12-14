@@ -8,25 +8,24 @@
 
 SceUID _vshKernelSearchModuleByName(const char *module_name, int *vsh_buf);
 
-int module_get_offset(SceUID modid, int segidx, uint32_t offset, void *stub_out){
-
+int module_get_offset(SceUID modid, int segidx, uint32_t offset, void *stub_out) {
 	int res = 0;
 	SceKernelModuleInfo info;
 
-	if(segidx > 3){
+	if (segidx > 3) {
 		return -1;
 	}
 
-	if(stub_out == NULL){
+	if (stub_out == NULL) {
 		return -2;
 	}
 
 	res = sceKernelGetModuleInfo(modid, &info);
-	if(res < 0){
+	if (res < 0) {
 		return res;
 	}
 
-	if(offset > info.segments[segidx].memsz){
+	if (offset > info.segments[segidx].memsz) {
 		return -3;
 	}
 
@@ -37,8 +36,7 @@ int module_get_offset(SceUID modid, int segidx, uint32_t offset, void *stub_out)
 
 const char patch[] = {0x00, 0x20, 0x70, 0x47};
 
-int red_msg_inject(tai_module_info_t *info){
-
+int red_msg_inject(tai_module_info_t *info) {
 	SceUID modid = info->modid;
 
 	switch (info->module_nid) {
@@ -67,8 +65,7 @@ int red_msg_inject(tai_module_info_t *info){
 	return 0;
 }
 
-int delete_red_msg_without_enso(tai_module_info_t *info){
-
+int delete_red_msg_without_enso(tai_module_info_t *info) {
 	void *shell_top_widget, *widget_activate;
 	int (* update_string)(void *widget_ptr, void *a2, int a3);
 
@@ -84,25 +81,22 @@ int delete_red_msg_without_enso(tai_module_info_t *info){
 	case 0x6CB01295: // SceShell 3.60 DevKit
 		taiInjectData(modid, 0, 0x208F8, patch, 4);
 		break;
-	/*
 	case 0x5549BF1F: // SceShell 3.65 Retail
-		taiInjectData(modid, 0, x, patch, 4);
+		taiInjectData(modid, 0, 0x21BB0, patch, 4); // from Paddel06's fork
 		break;
 	case 0x587F9CED: // SceShell 3.65 TestKit
-		taiInjectData(modid, 0, x, patch, 4);
+		taiInjectData(modid, 0, 0x20928, patch, 4); // from Paddel06's fork
 		break;
 	case 0xE6A02F2B: // SceShell 3.65 DevKit
-		taiInjectData(modid, 0, x, patch, 4);
+		taiInjectData(modid, 0, 0x20908, patch, 4); // from Paddel06's fork
 		break;
-	*/
 	default:
 		return -1;
 	}
 
 	widget_activate = (void *)(*(int *)(*(int *)(shell_top_widget) + 0x1D8 + 8));
 
-	if(widget_activate != NULL){
-
+	if (widget_activate != NULL) {
 		update_string = (void *)(*(uint32_t *)(*(int *)(widget_activate) + 0x118));
 
 		int data[2];
@@ -117,27 +111,26 @@ int delete_red_msg_without_enso(tai_module_info_t *info){
 }
 
 void _start() __attribute__ ((weak, alias("module_start")));
-int module_start(SceSize args, void *argp){
-
+int module_start(SceSize args, void *argp) {
 	tai_module_info_t info;
 	info.size = sizeof(info);
 
-	if(taiGetModuleInfo("SceShell", &info) < 0)
+	if (taiGetModuleInfo("SceShell", &info) < 0)
 		return SCE_KERNEL_START_FAILED;
 
 	int buf[2];
 
 	int some_mode = (_vshKernelSearchModuleByName("SceSysStateMgr", buf) < 0) ? 0 : 1;
 
-	if(some_mode == 0){
+	if (some_mode == 0) {
 		delete_red_msg_without_enso(&info);
-	}else{
+	} else {
 		red_msg_inject(&info);
 	}
 
 	return SCE_KERNEL_START_SUCCESS;
 }
 
-int module_stop(SceSize args, void *argp){
+int module_stop(SceSize args, void *argp) {
 	return SCE_KERNEL_STOP_SUCCESS;
 }
