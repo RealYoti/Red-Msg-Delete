@@ -41,15 +41,24 @@ int red_msg_inject(tai_module_info_t *info){
 
 	SceUID modid = info->modid;
 
-	switch (info->module_nid){
-	case 0x0552F692: // SceShell 3.60 retail
+	switch (info->module_nid) {
+	case 0x0552F692: // SceShell 3.60 Retail
 		taiInjectData(modid, 0, 0x14F466, patch, 4);
 		break;
-	case 0xEAB89D5C: // SceShell 3.60 Testkit
+	case 0xEAB89D5C: // SceShell 3.60 TestKit
 		taiInjectData(modid, 0, 0x14789A, patch, 4);
 		break;
-	case 0x6CB01295: // SceShell 3.60 Devkit
+	case 0x6CB01295: // SceShell 3.60 DevKit
 		taiInjectData(modid, 0, 0x146E9E, patch, 4);
+		break;
+	case 0x5549BF1F: // SceShell 3.65 Retail
+		taiInjectData(modid, 0, 0x14F4BE, patch, 4);
+		break;
+	case 0x587F9CED: // SceShell 3.65 TestKit
+		taiInjectData(modid, 0, 0x1478F2, patch, 4);
+		break;
+	case 0xE6A02F2B: // SceShell 3.65 DevKit
+		taiInjectData(modid, 0, 0x146EF6, patch, 4);
 		break;
 	default:
 		return -1;
@@ -65,16 +74,27 @@ int delete_red_msg_without_enso(tai_module_info_t *info){
 
 	SceUID modid = info->modid;
 
-	switch (info->module_nid){
-	case 0x0552F692: // SceShell 3.60 retail
-		module_get_offset(modid, 1, 0x21BA0, &shell_top_widget);
+	switch (info->module_nid) {
+	case 0x0552F692: // SceShell 3.60 Retail
+		taiInjectData(modid, 0, 0x21BA0, patch, 4);
 		break;
-	case 0xEAB89D5C: // SceShell 3.60 Testkit
-		module_get_offset(modid, 1, 0x20918, &shell_top_widget);
+	case 0xEAB89D5C: // SceShell 3.60 TestKit
+		taiInjectData(modid, 0, 0x20918, patch, 4);
 		break;
-	case 0x6CB01295: // SceShell 3.60 Devkit
-		module_get_offset(modid, 1, 0x208F8, &shell_top_widget);
+	case 0x6CB01295: // SceShell 3.60 DevKit
+		taiInjectData(modid, 0, 0x208F8, patch, 4);
 		break;
+	/*
+	case 0x5549BF1F: // SceShell 3.65 Retail
+		taiInjectData(modid, 0, x, patch, 4);
+		break;
+	case 0x587F9CED: // SceShell 3.65 TestKit
+		taiInjectData(modid, 0, x, patch, 4);
+		break;
+	case 0xE6A02F2B: // SceShell 3.65 DevKit
+		taiInjectData(modid, 0, x, patch, 4);
+		break;
+	*/
 	default:
 		return -1;
 	}
