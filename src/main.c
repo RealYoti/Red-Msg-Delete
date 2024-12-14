@@ -48,7 +48,7 @@ int red_msg_inject(tai_module_info_t *info){
 	case 0xEAB89D5C: // SceShell 3.60 Testkit
 		taiInjectData(modid, 0, 0x14789A, patch, 4);
 		break;
-	case 0x6CB01295: //  SceShell3.60 Devkit
+	case 0x6CB01295: // SceShell 3.60 Devkit
 		taiInjectData(modid, 0, 0x146E9E, patch, 4);
 		break;
 	default:
@@ -72,7 +72,7 @@ int delete_red_msg_without_enso(tai_module_info_t *info){
 	case 0xEAB89D5C: // SceShell 3.60 Testkit
 		module_get_offset(modid, 1, 0x20918, &shell_top_widget);
 		break;
-	case 0x6CB01295: //  SceShell3.60 Devkit
+	case 0x6CB01295: // SceShell 3.60 Devkit
 		module_get_offset(modid, 1, 0x208F8, &shell_top_widget);
 		break;
 	default:
